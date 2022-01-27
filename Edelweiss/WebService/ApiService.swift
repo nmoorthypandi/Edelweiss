@@ -13,12 +13,22 @@ enum NetworkError: Error {
     case invalidJSONFormat
 }
 
-protocol MovieListServiceProtocol {
+protocol MovieApiServiceProtocol {
     func getMovies(_ completion: @escaping(Result<MoviesDataModel, NetworkError>) -> Void)
 }
 
-class ApiService: MovieListServiceProtocol {
-    init() { }
+class ApiService {
+    let movieApiServiceProtocol: MovieApiServiceProtocol
+    init(movieApiServiceProtocol: MovieApiServiceProtocol) {
+        self.movieApiServiceProtocol = movieApiServiceProtocol
+    }
+    
+    func getMovies(_ completion: @escaping (Result<MoviesDataModel, NetworkError>) -> Void) {
+        movieApiServiceProtocol.getMovies(completion)
+    }
+}
+
+class MovieApiService: MovieApiServiceProtocol {
     let baseURL = "https://api.nytimes.com/svc/movies/v2/reviews/search.json?query=godfather&api-key=U3MmwD0tMDhl8HcqRLWJaSF6XiOE8oEJ"
     func getMovies(_ completion: @escaping (Result<MoviesDataModel, NetworkError>) -> Void) {
         guard let url = URL(string: baseURL) else {
